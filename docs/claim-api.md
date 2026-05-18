@@ -1,3 +1,4 @@
+<a href="https://bring.network/"><img width="150px" src="https://media.bringweb3.io/logos/logo_doc.png"/></a>
 # Claim API - Partner Integration Specification
 
 This document describes how partner platforms integrate with Bring's **Claim API** to allow end users to withdraw (claim) their accumulated token balance to a destination wallet.
