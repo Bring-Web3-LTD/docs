@@ -147,7 +147,7 @@ Top level:
 | `tokenName`             | `string`  | Human-readable token name (e.g. `"USD Coin"`).                               |
 | `tokenAmount`           | `number`  | Claimable balance in human units. Pass to `/claim-init` as `tokenAmount`.    |
 | `minimumClaimThreshold` | `number`  | Minimum amount the user must accumulate before the claim button is enabled.  |
-| `tokenIconPath`         | `string`  | Append to `tokenIconBasePath` for the icon URL.                              |
+| `tokenIconPath`         | `string`  | **Deprecated.** Append to `tokenIconBasePath` for the icon URL. Will be removed in a future version - construct the icon URL from `tokenSymbol` instead. |
 | `tokenInUsd`            | `number \| null` | Spot price of 1 token in USD (or `null` if rate unavailable).         |
 | `totalEstimatedUsd`     | `number \| null` | `tokenAmount * tokenInUsd`, for convenience.                          |
 
