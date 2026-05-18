@@ -1,0 +1,39 @@
+name: Sync external READMEs
+
+on:
+  # Run on demand from the Actions tab
+  workflow_dispatch:
+  # Run on a daily schedule as a safety net
+  schedule:
+    - cron: '0 6 * * *'
+  # Triggered by repository_dispatch from source repos when their README changes
+  repository_dispatch:
+    types: [readme-updated]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Sync READMEs
+        run: node scripts/sync-readmes.mjs
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git add docs/
+            git commit -m "chore: sync external READMEs"
+            git push
+          else
+            echo "No changes to commit."
+          fi
