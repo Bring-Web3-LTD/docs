@@ -30,7 +30,7 @@ POST https://api.bringweb3.io/v1/platforms/claim-submit
 >
 > CORS is not enabled for these endpoints; direct browser calls will be rejected.
 
-All requests must include the `x-api-key` header with the API key issued to your platform. The server derives `platformId` and `platformName` from this credential - they must **not** be sent in the request body.
+All requests must include the `x-api-key` header with the API key issued to your platform. They must **not** be sent in the request body.
 
 Content type: `application/json`.
 
@@ -219,7 +219,7 @@ x-api-key: <partner-api-key>
 
 - `messageToSign` - the **exact** string to pass to the user's wallet (`personal_sign` / `eth_signTypedData` for EVM, equivalent for other chains). It begins with a 32-character random nonce followed by `\n\n` and the human-readable claim statement.
 
-> **Important:** Do not modify, trim, or re-construct this string. The server hashes it as-is to look up the request. Any whitespace or character change will cause `claim-submit` to fail.
+> **Important:** Do not modify, trim, or re-construct this string. Any whitespace or character change will cause `claim-submit` to fail.
 
 ### Error responses
 
@@ -260,13 +260,7 @@ const signature = await signer.signMessage(messageToSign);
 
 ## Step 3 - `POST /v1/platforms/claim-submit`
 
-Submits the signed message. The server:
-
-1. Hashes `message` and looks up the pending request created in `claim-init`.
-2. Verifies the signature against `walletAddress`.
-3. Atomically validates availability and **locks** the funds.
-4. Executes the transfer (on-chain or exchange).
-5. Records the claim and clears the lock.
+Submits the signed message.
 
 ### Request body
 
@@ -403,9 +397,9 @@ async function claim(signer, params) {
 
 ## Operational notes & best practices
 
-- **Pass `messageToSign` byte-for-byte.** The server identifies the request by hashing this string.
+- **Pass `messageToSign` byte-for-byte.**.
 - **Send `tokenAmount` as a number, not a string**, and use the same value in init and submit. Mismatches are rejected.
-- **`tokenSymbol` is case-insensitive** (normalized to upper case server-side). Use `USDC`, `usdc`, etc.
+- **`tokenSymbol` is case-insensitive**. Use `USDC`, `usdc`, etc.
 - **Retries:** if `claim-submit` returns `5xx` or network-fails *after* the server may have started the transfer, do **not** silently retry with a new `claim-init`. Re-submit the same `message` + `signature`; the server is idempotent and will return `409 duplicate request` if it already processed it.
 - **Concurrent claims for the same wallet + token** are not supported - funds are locked during processing. Submit serially.
 - **Timeouts:** allow at least 30s for `claim-submit`, as it waits for transfer dispatch.
