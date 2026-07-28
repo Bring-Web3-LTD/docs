@@ -48,7 +48,8 @@ Include this configuration inside your `manifest.json` file:
   "permissions": [
     "storage",
     "tabs",
-    "webNavigation"
+    "webNavigation",
+    "webRequest"
   ],
   "content_scripts": [
     {
@@ -62,11 +63,11 @@ Include this configuration inside your `manifest.json` file:
     }
   ],
   "host_permissions": [
-    "https://*.bringweb3.io/*"
+    "http://*/*",
+    "https://*/*"
   ]
 ```
 
-> **Note:** `webNavigation` is optional but recommended as it improves the user experience.
 
 ## Importing
 Once the package is installed, you can import the library using `import` or `require` approach:
