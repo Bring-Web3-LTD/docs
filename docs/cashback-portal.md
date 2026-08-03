@@ -208,6 +208,7 @@ All messages from the portal carry `from: 'bringweb3'`. All messages your page s
 | `LOGIN`          | `{}`                                                     | The user clicked **Connect**. Trigger your wallet's connect flow.                              |
 | `SIGN_MESSAGE`   | `{ messageToSign, amount, tokenSymbol }`                 | The user wants to claim. Ask the wallet to sign `messageToSign`.                               |
 | `POPUP_CLOSED`   | `{}`                                                     | A modal inside the portal was dismissed. Informational; nothing required.                      |
+| `PORTAL_ERROR`   | `{ type: 'VERIFY', status }`                             | The portal failed to load. `type: 'VERIFY'` means the session token could not be verified (on first load or after a `SESSION_UPDATE`); `status` is the HTTP status of the failed call (`0` = network error). Hide the iframe and show your own fallback. |
 
 **Messages from your page → the portal** (sent via `iframe.contentWindow.postMessage(..., portalOrigin)`)
 
@@ -250,6 +251,14 @@ window.addEventListener('message', async (event) => {
           portalOrigin,
         );
       }
+      break;
+    }
+
+    case 'PORTAL_ERROR': {
+      // The portal cannot load (e.g. `type: 'VERIFY'` — token rejected).
+      // Hide the iframe and show your own fallback UI.
+      iframe.style.display = 'none';
+      showCashbackFallback(event.data.type, event.data.status);
       break;
     }
   }
